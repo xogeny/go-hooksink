@@ -83,7 +83,7 @@ func (hs HookSink) Handle(res http.ResponseWriter, req *http.Request) {
 
 /* This creates a HookSink object.  Much of the work here is in setting up
    the underlying Martini server. */
-func MakeHookSink() HookSink {
+func NewHookSink() *HookSink {
 	ret := HookSink{};
 
 	/* Create a martini instance */
@@ -93,8 +93,7 @@ func MakeHookSink() HookSink {
 	//m.Use(vauth.GitHub);
 
 	/* Add some middleware to invoke the Authenticate method (if provided) */
-	/*
-	m.Use(func(res http.ResponseWriter, params martini.Params, req *http.Request) {
+	m.Use(func(res http.ResponseWriter, req *http.Request) {
 		if (ret.auth!=nil) {
 			ok := ret.auth(req);
 			if (!ok) {
@@ -102,11 +101,10 @@ func MakeHookSink() HookSink {
 			}
 		}
 	});
-    */
 
 	/* Add the martini data to the HookSink object */
 	ret.martini = m;
 
 	/* And return */
-	return ret;
+	return &ret;
 }

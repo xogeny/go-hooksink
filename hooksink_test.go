@@ -3,6 +3,7 @@ package hooksink
 import "log"
 import "testing"
 import "encoding/json"
+import "net/http"
 
 import . "github.com/onsi/gomega"
 
@@ -174,7 +175,7 @@ func TestUnmarshal(t *testing.T) {
 func TestHS1(t *testing.T) {
 	RegisterTestingT(t);
 
-	h := MakeHookSink();
+	h := NewHookSink();
 
 	pc := PushChecker{};
 	h.Add("/push", &pc);
@@ -184,4 +185,21 @@ func TestHS1(t *testing.T) {
 	Expect(status).To(Equal(200));
 
 	Eventually(func() bool { return pc.Called; }).Should(Equal(true));
+}
+
+func TestHS2(t *testing.T) {
+	RegisterTestingT(t);
+
+	h := NewHookSink();
+
+	h.Authenticate(func(req *http.Request) bool {
+		return false;
+	});
+
+	pc := PushChecker{};
+	h.Add("/push", &pc);
+
+	status, err := tu.Post(h.Handle, "/push", samplePush);
+	Expect(err).To(BeNil());
+	Expect(status).To(Equal(401));
 }
