@@ -175,7 +175,7 @@ func TestUnmarshal(t *testing.T) {
 func TestHS1(t *testing.T) {
 	RegisterTestingT(t);
 
-	h := NewHookSink();
+	h := NewHookSink("");
 
 	pc := PushChecker{};
 	h.Add("/push", &pc);
@@ -190,7 +190,7 @@ func TestHS1(t *testing.T) {
 func TestHS2(t *testing.T) {
 	RegisterTestingT(t);
 
-	h := NewHookSink();
+	h := NewHookSink("");
 
 	h.Authenticate(func(req *http.Request) bool {
 		return false;
@@ -202,4 +202,20 @@ func TestHS2(t *testing.T) {
 	status, err := tu.Post(h.Handle, "/push", samplePush);
 	Expect(err).To(BeNil());
 	Expect(status).To(Equal(401));
+}
+
+func TestHS3(t *testing.T) {
+	RegisterTestingT(t);
+
+	secret := "abcdefg";
+	h := NewHookSink(secret);
+
+	pc := PushChecker{};
+	h.Add("/push", &pc);
+
+	status, err := tu.AuthPost(h.Handle, "/push", samplePush, secret);
+	Expect(err).To(BeNil());
+	Expect(status).To(Equal(200));
+
+	Eventually(func() bool { return pc.Called; }).Should(Equal(true));
 }

@@ -11,7 +11,7 @@ func (l Logger) Push(msg hs.HubMessage) {
 }
 
 func main() {
-	h := hs.NewHookSink();
+	h := hs.NewHookSink("ssshhhh!");
 	h.Add("/log", Logger{});
 	h.Start();
 }
