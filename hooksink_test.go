@@ -1,6 +1,8 @@
 package hooksink 
 
+import "log"
 import "testing"
+import "encoding/json"
 
 import . "github.com/onsi/gomega"
 
@@ -154,6 +156,17 @@ type PushChecker struct {
 
 func (pc PushChecker) Push(msg HubMessage) {
 	Expect(msg.Repository.Owner).To(Equal("baxterthehacker"));
+}
+
+func TestUnmarshal(t *testing.T) {
+	RegisterTestingT(t);
+
+	msg := HubMessage{};
+	err := json.Unmarshal([]byte(samplePush), &msg);
+	if (err!=nil) {
+		log.Print(err.Error());
+	}
+	Expect(err).To(BeNil());
 }
 
 func TestHS1(t *testing.T) {

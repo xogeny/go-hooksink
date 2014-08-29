@@ -4,7 +4,10 @@ type HubMessage struct {
 	Repository struct {
 		Status    string
 		RepoUrl   string `json:"repo_url"`
-		Owner     string
+		Owner     struct {
+			Name     string `json:"name"`
+			Email    string `json:"email"`
+		}
 		IsPrivate bool `json:"is_private"`
 		Name      string
 		StarCount int    `json:"star_count"`

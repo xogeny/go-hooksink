@@ -2,9 +2,10 @@ package hooksink
 
 import "log"
 import "net/http"
+import "io/ioutil"
 import "encoding/json"
 import "github.com/go-martini/martini"
-import "github.com/rafecolton/vauth"
+//import "github.com/rafecolton/vauth"
 
 type AuthFunction func(req *http.Request) bool;
 
@@ -34,18 +35,28 @@ func (hs *HookSink) Add(path string, handler interface{}) {
 	if (ok) {
 		match = true;
 		// TODO: Need to add logic here to make sure this is actually a `push` event
+        //       Use X-GitHub-Event header for this.
+		//       see https://developer.github.com/v3/repos/hooks/#webhook-headers
 		// TODO: Test what happens if we end up with multiple handlers at a given path
-		hs.martini.Get(path, func(res http.ResponseWriter, h HookSink, req *http.Request) {
-			decoder := json.NewDecoder(req.Body)
-			msg := HubMessage{};
-			err := decoder.Decode(&msg)
+		hs.martini.Post(path, func(res http.ResponseWriter, req *http.Request) {
+			var foobar HubMessage;
+			
+			payload, err := ioutil.ReadAll(req.Body);
 			if (err!=nil) {
-				log.Printf("Invalid GitHub data: %s", err.Error());
+				log.Printf("Error reading request body: %s", err.Error());
 				res.WriteHeader(500);
-			} else {
-				go pusher.Push(msg);
-				res.WriteHeader(200);
+				return;
 			}
+
+			err = json.Unmarshal(payload, &foobar);
+			if (err!=nil) {
+				log.Printf("Error reading JSON data: %s", err.Error());
+				res.WriteHeader(500);
+				return;
+			}
+
+			go pusher.Push(foobar);
+			res.WriteHeader(200);
 		});
 	}
 
@@ -79,9 +90,10 @@ func MakeHookSink() HookSink {
 	m := martini.Classic()
 
 	/* Add code to check the HMAC of this request */
-	m.Use(vauth.GitHub);
+	//m.Use(vauth.GitHub);
 
 	/* Add some middleware to invoke the Authenticate method (if provided) */
+	/*
 	m.Use(func(res http.ResponseWriter, params martini.Params, req *http.Request) {
 		if (ret.auth!=nil) {
 			ok := ret.auth(req);
@@ -90,6 +102,7 @@ func MakeHookSink() HookSink {
 			}
 		}
 	});
+    */
 
 	/* Add the martini data to the HookSink object */
 	ret.martini = m;
