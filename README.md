@@ -7,6 +7,9 @@ reusable code for easily creating Go based servers for handling
 webhooks.  I have several applications in mind for this and I suspect
 it will change significantly as I go.
 
+This code does an HMAC check on the `X-GitHub-Signature` header to
+authenticate the request.
+
 ## Example
 
 The goal of this Go package is to allow users to easily create a
@@ -29,7 +32,7 @@ func (l Logger) Push(msg hs.HubMessage) {
 }
 
 func main() {
-	h := hs.NewHookSink();
+	h := hs.NewHookSink("<github webhook secret>");
 	h.Add("/log", Logger{});
 	h.Start();
 o}

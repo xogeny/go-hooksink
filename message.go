@@ -1,5 +1,6 @@
 package hooksink
 
+/* A Golang representation of (some of) the GitHub push event payload */
 type HubMessage struct {
 	Repository struct {
 		Status    string
