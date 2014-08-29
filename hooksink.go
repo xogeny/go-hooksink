@@ -48,8 +48,6 @@ func (hs *HookSink) Add(path string, handler interface{}) {
 				return;
 			}
 
-			log.Printf("Raw data:");
-			log.Printf(string(payload));
 			err = json.Unmarshal(payload, &foobar);
 			if (err!=nil) {
 				log.Printf("Error reading JSON data: %s", err.Error());
