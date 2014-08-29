@@ -64,6 +64,12 @@ func (hs *HookSink) Start() {
 	}
 }
 
+/* This is used for testing */
+func (hs HookSink) Handle(res http.ResponseWriter, req *http.Request) {
+	hs.martini.ServeHTTP(res, req);
+}
+
+
 /* This creates a HookSink object.  Much of the work here is in setting up
    the underlying Martini server. */
 func MakeHookSink() HookSink {
