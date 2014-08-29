@@ -152,10 +152,12 @@ var samplePush = `
 `
 
 type PushChecker struct {
+	Called bool;
 }
 
-func (pc PushChecker) Push(msg HubMessage) {
-	Expect(msg.Repository.Owner).To(Equal("baxterthehacker"));
+func (pc *PushChecker) Push(msg HubMessage) {
+	pc.Called = true;
+	Expect(msg.Repository.Owner.Name).To(Equal("baxterthehacker"));
 }
 
 func TestUnmarshal(t *testing.T) {
@@ -174,9 +176,12 @@ func TestHS1(t *testing.T) {
 
 	h := MakeHookSink();
 
-	h.Add("/push", PushChecker{});
+	pc := PushChecker{};
+	h.Add("/push", &pc);
 
 	status, err := tu.Post(h.Handle, "/push", samplePush);
 	Expect(err).To(BeNil());
 	Expect(status).To(Equal(200));
+
+	Eventually(func() bool { return pc.Called; }).Should(Equal(true));
 }
