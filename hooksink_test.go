@@ -181,7 +181,7 @@ func TestHS1(t *testing.T) {
 	pc := PushChecker{};
 	h.Add("/push", &pc);
 
-	status, err := tu.Post(h.Handle, "/push?foo=bar", samplePush);
+	status, err := tu.Post(h.Handle, "/push?foo=bar&foo=buz", samplePush);
 	Expect(err).To(BeNil());
 	Expect(status).To(Equal(200));
 
