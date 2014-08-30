@@ -4,5 +4,5 @@ package hooksink
    support other event types (or whether that even makes sense), but
    I thought I'd make this explicit. */
 type PushHandler interface {
-	Push(HubMessage)
+	Push(msg HubMessage, params map[string][]string)
 }

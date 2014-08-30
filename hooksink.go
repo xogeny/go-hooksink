@@ -61,7 +61,7 @@ func (hs *HookSink) Add(path string, handler interface{}) {
         //       Use X-GitHub-Event header for this.
 		//       see https://developer.github.com/v3/repos/hooks/#webhook-headers
 		// TODO: Test what happens if we end up with multiple handlers at a given path
-		hs.martini.Post(path, func(res http.ResponseWriter, req *http.Request) {
+		hs.martini.Post(path, func(res http.ResponseWriter, params martini.Params, req *http.Request) {
 			/* Create an empty message */
 			foobar := HubMessage{};
 			
@@ -91,7 +91,7 @@ func (hs *HookSink) Add(path string, handler interface{}) {
 			}
 
 			/* Looks like we have a valid HubMessage, let the handler know. */
-			go pusher.Push(foobar);
+			go pusher.Push(foobar, map[string][]string(req.URL.Query()));
 
 			/* Reply with "OK" status */
 			res.WriteHeader(200);

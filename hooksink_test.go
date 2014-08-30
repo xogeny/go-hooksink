@@ -156,8 +156,9 @@ type PushChecker struct {
 	Called bool;
 }
 
-func (pc *PushChecker) Push(msg HubMessage) {
+func (pc *PushChecker) Push(msg HubMessage, params map[string][]string) {
 	pc.Called = true;
+	log.Printf("Parameters = %v", params);
 	Expect(msg.Repository.Owner.Name).To(Equal("baxterthehacker"));
 }
 
@@ -180,7 +181,7 @@ func TestHS1(t *testing.T) {
 	pc := PushChecker{};
 	h.Add("/push", &pc);
 
-	status, err := tu.Post(h.Handle, "/push", samplePush);
+	status, err := tu.Post(h.Handle, "/push?foo=bar", samplePush);
 	Expect(err).To(BeNil());
 	Expect(status).To(Equal(200));
 
