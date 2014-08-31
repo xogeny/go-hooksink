@@ -1,4 +1,4 @@
-package hooksink 
+package hooksink
 
 import "log"
 import "testing"
@@ -153,70 +153,70 @@ var samplePush = `
 `
 
 type PushChecker struct {
-	Called bool;
+	Called bool
 }
 
 func (pc *PushChecker) Push(msg HubMessage, params map[string][]string) {
-	pc.Called = true;
-	log.Printf("Parameters = %v", params);
-	Expect(msg.Repository.Owner.Name).To(Equal("baxterthehacker"));
+	pc.Called = true
+	log.Printf("Parameters = %v", params)
+	Expect(msg.Repository.Owner.Name).To(Equal("baxterthehacker"))
 }
 
 func TestUnmarshal(t *testing.T) {
-	RegisterTestingT(t);
+	RegisterTestingT(t)
 
-	msg := HubMessage{};
-	err := json.Unmarshal([]byte(samplePush), &msg);
-	if (err!=nil) {
-		log.Print(err.Error());
+	msg := HubMessage{}
+	err := json.Unmarshal([]byte(samplePush), &msg)
+	if err != nil {
+		log.Print(err.Error())
 	}
-	Expect(err).To(BeNil());
+	Expect(err).To(BeNil())
 }
 
 func TestHS1(t *testing.T) {
-	RegisterTestingT(t);
+	RegisterTestingT(t)
 
-	h := NewHookSink("");
+	h := NewHookSink("")
 
-	pc := PushChecker{};
-	h.Add("/push", &pc);
+	pc := PushChecker{}
+	h.Add("/push", &pc)
 
-	status, err := tu.Post(h.Handle, "/push?foo=bar&foo=buz", samplePush);
-	Expect(err).To(BeNil());
-	Expect(status).To(Equal(200));
+	status, err := tu.Post(h.Handle, "/push?foo=bar&foo=buz", samplePush)
+	Expect(err).To(BeNil())
+	Expect(status).To(Equal(200))
 
-	Eventually(func() bool { return pc.Called; }).Should(Equal(true));
+	Eventually(func() bool { return pc.Called }).Should(Equal(true))
 }
 
 func TestHS2(t *testing.T) {
-	RegisterTestingT(t);
+	RegisterTestingT(t)
 
-	h := NewHookSink("");
+	h := NewHookSink("")
 
 	h.Authenticate(func(req *http.Request) bool {
-		return false;
-	});
+		return false
+	})
 
-	pc := PushChecker{};
-	h.Add("/push", &pc);
+	pc := PushChecker{}
+	h.Add("/push", &pc)
 
-	status, err := tu.Post(h.Handle, "/push", samplePush);
-	Expect(err).To(BeNil());
-	Expect(status).To(Equal(401));
+	status, err := tu.Post(h.Handle, "/push", samplePush)
+	Expect(err).To(BeNil())
+	Expect(status).To(Equal(401))
 }
 
 func TestHS3(t *testing.T) {
-	RegisterTestingT(t);
+	RegisterTestingT(t)
 
-	secret := "abcdefg";
-	h := NewHookSink(secret);
+	secret := "abcdefg"
+	h := NewHookSink(secret)
 
-	pc := PushChecker{};
-	h.Add("/push", &pc);
+	pc := PushChecker{}
+	h.Add("/push", &pc)
 
-	status, err := tu.AuthPost(h.Handle, "/push", samplePush, secret);
-	Expect(err).To(BeNil());
-	Expect(status).To(Equal(200));
+	status, err := tu.AuthPost(h.Handle, "/push", samplePush, secret)
+	Expect(err).To(BeNil())
+	Expect(status).To(Equal(200))
 
-	Eventually(func() bool { return pc.Called; }).Should(Equal(true));
+	Eventually(func() bool { return pc.Called }).Should(Equal(true))
 }

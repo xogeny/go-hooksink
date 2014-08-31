@@ -1,8 +1,8 @@
 package hooksink
 
 type Owner struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
 }
 
 type Repository struct {
@@ -17,7 +17,7 @@ type Repository struct {
 }
 
 type HeadCommit struct {
-	Id        string `json:"id"`
+	Id string `json:"id"`
 }
 
 type PushData struct {
@@ -28,9 +28,9 @@ type PushData struct {
 
 /* A Golang representation of (some of) the GitHub push event payload */
 type HubMessage struct {
-	Repository Repository `json:"repository"`;
-	HeadCommit HeadCommit `json:"head_commit"`;
-	PushData   PushData   `json:"push_data"`;
+	Repository Repository `json:"repository"`
+	HeadCommit HeadCommit `json:"head_commit"`
+	PushData   PushData   `json:"push_data"`
 
-	After      string `json:"after"`
+	After string `json:"after"`
 }
