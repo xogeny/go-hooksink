@@ -1,6 +1,5 @@
 package testutils
 
-import "log"
 import "fmt"
 import "bytes"
 import "net/http"
@@ -29,8 +28,6 @@ func AuthPost(f HandleFunc, path string, payload string, secret string) (status 
 	if err != nil {
 		return
 	}
-
-	log.Printf("req.URL.Query() = %v", req.URL.Query())
 
 	/* If a secret was given, add an X-Hub-Signature header */
 	if secret != "" {
