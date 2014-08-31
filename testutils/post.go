@@ -7,19 +7,19 @@ import "net/http/httptest"
 import "crypto/hmac"
 import "crypto/sha1"
 
-type HandleFunc func(res http.ResponseWriter, req *http.Request)
-
-/* This function POSTs the given payload to the server (directly, without having
-   to start up an actual web server) */
-func Post(f HandleFunc, path string, payload string) (status int, err error) {
+// The Post function calls the provided function, f, to POST the given
+// payload to the server (directly, without having to start up an
+// actual web server).
+func Post(f http.HandlerFunc, path string, payload string) (status int, err error) {
 	/* Just call AuthPost with no secret. */
 	return AuthPost(f, path, payload, "")
 }
 
-/* This function POSTs the given payload to the server (directly,
-   without having to start up an actual web server) and provides a
-   secret for HMAC checking */
-func AuthPost(f HandleFunc, path string, payload string, secret string) (status int, err error) {
+// The AuthPost function calls the provided fucntion, f, to POST the
+// given payload to the server (directly, without having to start up
+// an actual web server) and provides a secret for HMAC checking
+func AuthPost(f http.HandlerFunc, path string,
+	payload string, secret string) (status int, err error) {
 	/* Create a buffer for the payload */
 	raw := bytes.NewBuffer([]byte(payload))
 

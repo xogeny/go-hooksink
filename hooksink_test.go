@@ -156,7 +156,7 @@ type PushChecker struct {
 	Called bool
 }
 
-func (pc *PushChecker) Push(msg HubMessage, params map[string][]string) {
+func (pc *PushChecker) Push(msg PushMessage, params map[string][]string) {
 	pc.Called = true
 	log.Printf("Parameters = %v", params)
 	Expect(msg.Repository.Owner.Name).To(Equal("baxterthehacker"))
@@ -165,7 +165,7 @@ func (pc *PushChecker) Push(msg HubMessage, params map[string][]string) {
 func TestUnmarshal(t *testing.T) {
 	RegisterTestingT(t)
 
-	msg := HubMessage{}
+	msg := PushMessage{}
 	err := json.Unmarshal([]byte(samplePush), &msg)
 	if err != nil {
 		log.Print(err.Error())
